@@ -1,5 +1,6 @@
 import sys
 import regex as re
+from collections import Counter
 
 def get_soundex_code(word):
 
@@ -38,10 +39,23 @@ def get_soundex_code(word):
 
 if __name__ == "__main__":
 
+	# Adding arguments to CLI script, requsting text document, requesting a word for search
     script = sys.argv[0]
     filename = sys.argv[1]
     requested_word = sys.argv[2]
+
+    # Putting all words from txt file to list 
     list_of_words = open(filename, encoding="utf8").read().split()
-    for word in list_of_words:
-        if get_soundex_code(requested_word) == get_soundex_code(word):
-            print(word)
+
+    # Saving list of words that returns as similar requested word by Soundex algorithm
+    matches = [re.sub(r'[^a-zA-Z ]+','',word) for word in list_of_words if get_soundex_code(requested_word) == get_soundex_code(word)]
+
+    # Counts how many times same word appears in  list
+    counter = Counter(matches)
+
+    # Sorts list by count number
+    top = sorted(counter, key=counter.get, reverse=True)[:5]
+
+    # Prints top similar words
+    for place in top:
+    	print(place)
