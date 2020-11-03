@@ -4,6 +4,7 @@ from collections import Counter
 import multiprocessing
 from functools import partial
 
+
 def get_soundex_code(word):
 
     # Gets first letter
@@ -16,8 +17,7 @@ def get_soundex_code(word):
     new_word = first_letter + \
         re.sub("[" + characters_to_remove + "]", "", word[1:])
 
-    to_replace = {('b', 'f', 'p', 'v'): "1", ('c', 'g', 'j', 'k', 'q', 's', 'x', 'z')
-                   : "2", ('d', 't'): "3", ('l'): "4", ('m', 'n'): "5", ('r'): "6"}
+    to_replace = {('b', 'f', 'p', 'v'): "1", ('c', 'g', 'j', 'k', 'q', 's', 'x', 'z'): "2", ('d', 't'): "3", ('l'): "4", ('m', 'n'): "5", ('r'): "6"}
     code = []
 
     # Replaces letters with numbers assigned to those letters
@@ -40,12 +40,14 @@ def get_soundex_code(word):
     # Returns word soundex code, if code is shorter than 3 digists it adds 0
     return code[:4].ljust(4, "0")
 
+
 def get_word(word, input_word):
 
     # Returns similar requested word by Soundex algorithm
     if get_soundex_code(input_word) == get_soundex_code(word):
-    	word = re.sub(r'[^a-zA-Z ]+', '', word)
-    	return word
+        word = re.sub(r'[^a-zA-Z ]+', '', word)
+        return word
+
 
 if __name__ == "__main__":
 
@@ -60,11 +62,12 @@ if __name__ == "__main__":
     # Putting all words from txt file to list
     list_of_words = open(filename, encoding="utf8").read().split()
 
-    # Adding some Concurrency 
+    # Adding some Concurrency
     with multiprocessing.Pool(cpus) as p:
-    	results = p.map(partial(get_word, input_word=requested_word), list_of_words)
-    	p.close()
-    	p.join()
+        results = p.map(
+            partial(get_word, input_word=requested_word), list_of_words)
+        p.close()
+        p.join()
 
     # Counts how many times same word appears in  list
     counter = Counter(results)
@@ -75,5 +78,4 @@ if __name__ == "__main__":
 
     # Prints top similar words
     for place in top:
-    	print(place)
-    
+        print(place)
