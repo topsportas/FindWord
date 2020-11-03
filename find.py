@@ -1,7 +1,8 @@
 import sys
 import regex as re
 from collections import Counter
-
+import multiprocessing
+from functools import partial
 
 def get_soundex_code(word):
 
@@ -39,6 +40,12 @@ def get_soundex_code(word):
     # Returns word soundex code, if code is shorter than 3 digists it adds 0
     return code[:4].ljust(4, "0")
 
+def get_word(word, input_word):
+
+    # Returns similar requested word by Soundex algorithm
+    if get_soundex_code(input_word) == get_soundex_code(word):
+    	word = re.sub(r'[^a-zA-Z ]+', '', word)
+    	return word
 
 if __name__ == "__main__":
 
@@ -47,19 +54,26 @@ if __name__ == "__main__":
     filename = sys.argv[1]
     requested_word = sys.argv[2]
 
+    # CPUS on computer
+    cpus = multiprocessing.cpu_count()
+
     # Putting all words from txt file to list
     list_of_words = open(filename, encoding="utf8").read().split()
 
-    # Saving list of words that returns as similar requested word by Soundex algorithm
-    matches = [re.sub(r'[^a-zA-Z ]+', '', word)
-               for word in list_of_words if get_soundex_code(requested_word) == get_soundex_code(word)]
+    # Adding some Concurrency 
+    with multiprocessing.Pool(cpus) as p:
+    	results = p.map(partial(get_word, input_word=requested_word), list_of_words)
+    	p.close()
+    	p.join()
 
     # Counts how many times same word appears in  list
-    counter = Counter(matches)
+    counter = Counter(results)
+    del counter[None]
 
     # Sorts list by count number
     top = sorted(counter, key=counter.get, reverse=True)[:5]
 
     # Prints top similar words
     for place in top:
-        print(place)
+    	print(place)
+    
