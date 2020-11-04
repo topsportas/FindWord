@@ -69,7 +69,7 @@ if __name__ == "__main__":
     cpus = multiprocessing.cpu_count()
 
     # Putting all words from txt file to list
-    list_of_words = open(filename, encoding="utf8").read().split()
+    list_of_words = open(filename, encoding="utf8", buffering=20000000).read().split()
 
     # Adding some Concurrency
     with multiprocessing.Pool(cpus) as p:
