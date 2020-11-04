@@ -43,7 +43,7 @@ def get_soundex_code(word):
 
 def get_word(word, input_word):
 
-    # Returns similar requested word by Soundex algorithm
+    # Returns similar requested word by Soundex algorithm, and cleans returned word from unwanted symbols
     if get_soundex_code(input_word) == get_soundex_code(word):
         word = re.sub(r'[^a-zA-Z ]+', '', word)
         return word
