@@ -64,15 +64,15 @@ if __name__ == "__main__":
     except:
     	print("Please specify a word as third argument")
     	sys.exit()
-
-    # CPUS on computer
-    cpus = multiprocessing.cpu_count()
-
+    if requested_word.isdigit():
+    	print("Word should not be a number")
+    	sys.exit()
+    	
     # Putting all words from txt file to list
     list_of_words = open(filename, encoding="utf8", buffering=20000000).read().split()
 
     # Adding some Concurrency
-    with multiprocessing.Pool(cpus) as p:
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as p:
         results = p.map(
             partial(get_word, input_word=requested_word), list_of_words)
         p.close()
