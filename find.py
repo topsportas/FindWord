@@ -51,10 +51,19 @@ def get_word(word, input_word):
 
 if __name__ == "__main__":
 
-    # Adding arguments to CLI, script, requsting text document, requesting a word for search
+    # Adding arguments to CLI, script, requsting text document, requesting a word for search. Also handling user input errors.
     script = sys.argv[0]
-    filename = sys.argv[1]
-    requested_word = sys.argv[2]
+
+    try:
+    	filename = sys.argv[1]
+    except IndexError:
+    	print("Please specify text file name as second argument")
+    	sys.exit()
+    try:
+    	requested_word = sys.argv[2]
+    except:
+    	print("Please specify a word as third argument")
+    	sys.exit()
 
     # CPUS on computer
     cpus = multiprocessing.cpu_count()
