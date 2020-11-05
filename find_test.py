@@ -1,6 +1,7 @@
 import find
 
-class TestClass:
+class TestFind:
+	
 	def test_get_word(self):
 	    assert find.get_word("test", "test/09][],..,-*/") == "test"
 
