@@ -59,13 +59,15 @@ if __name__ == "__main__":
     except IndexError:
     	print("Please specify text file name as second argument")
     	sys.exit()
+
     try:
     	requested_word = sys.argv[2]
     except:
     	print("Please specify a word as third argument")
     	sys.exit()
-    if requested_word.isdigit():
-    	print("Word should not be a number")
+
+    if set('[~!@#$%^&*()_+{}":;\']+-$0123456789').intersection(requested_word):
+    	print("Input word must contain only letters no special symbols")
     	sys.exit()
     	
     # Putting all words from txt file to list
