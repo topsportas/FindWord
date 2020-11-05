@@ -17,7 +17,8 @@ def get_soundex_code(word):
     new_word = first_letter + \
         re.sub("[" + characters_to_remove + "]", "", word[1:])
 
-    to_replace = {('b', 'f', 'p', 'v'): "1", ('c', 'g', 'j', 'k', 'q', 's', 'x', 'z'): "2", ('d', 't'): "3", ('l'): "4", ('m', 'n'): "5", ('r'): "6"}
+    to_replace = {('b', 'f', 'p', 'v'): "1", ('c', 'g', 'j', 'k', 'q', 's', 'x', 'z')
+                   : "2", ('d', 't'): "3", ('l'): "4", ('m', 'n'): "5", ('r'): "6"}
     code = []
 
     # Replaces letters with numbers assigned to those letters
@@ -55,23 +56,24 @@ if __name__ == "__main__":
     script = sys.argv[0]
 
     try:
-    	filename = sys.argv[1]
+        filename = sys.argv[1]
     except IndexError:
-    	print("Please specify text file name as second argument")
-    	sys.exit()
+        print("Please specify text file name as second argument")
+        sys.exit()
 
     try:
-    	requested_word = sys.argv[2]
+        requested_word = sys.argv[2]
     except:
-    	print("Please specify a word as third argument")
-    	sys.exit()
+        print("Please specify a word as third argument")
+        sys.exit()
 
-    if set('[~!@#$%^&*()_+{}":;\']+-$0123456789').intersection(requested_word):
-    	print("Input word must contain only letters no special symbols")
-    	sys.exit()
-    	
+    if not (re.match('^[a-zA-Z]+$', requested_word)):
+        print("Input word must contain only letters no special symbols ir numbers")
+        sys.exit()
+
     # Putting all words from txt file to list
-    list_of_words = open(filename, encoding="utf8", buffering=20000000).read().split()
+    list_of_words = open(filename, encoding="utf8",
+                         buffering=20000000).read().split()
 
     # Adding some Concurrency
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as p:
