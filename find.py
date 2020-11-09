@@ -7,39 +7,44 @@ from functools import partial
 
 def get_soundex_code(word):
 
+    # Characters that needs to be removed
+    characters_to_remove = "aeiouy"
+
+    # Characters that needs to be replaced and creating letters mapping table
+    to_replace = {'1': ['b', 'f', 'p', 'v'],
+                  '2': ['c', 'g', 'j', 'k', 'q', 's', 'x', 'z'],
+                  '3': ['d', 't'],
+                  '4': ['l'],
+                  '5': ['m', 'n'],
+                  '6': ['r']}
+
+    mapping_table = {}
+
+    for value, group in to_replace.items():
+        for char in group:
+            mapping_table[char] = value
+
     # Gets first letter
-    first_letter = word[0]
+    first_letter = word[0].lower()
 
-    # Characters that needs to be removes
-    characters_to_remove = "aeiouyhw"
+    # Characters h and w removed
+    code = first_letter + re.sub(r'[hw]*', '', word[1:])
 
-    # Removes not needed characters
-    new_word = first_letter + \
-        re.sub("[" + characters_to_remove + "]", "", word[1:])
+    # Replaces letters with numbers assigned to those letters and joins string
+    code = "".join([mapping_table.get(char, char) for char in code])
 
-    to_replace = {('b', 'f', 'p', 'v'): "1", ('c', 'g', 'j', 'k', 'q', 's', 'x', 'z')
-                   : "2", ('d', 't'): "3", ('l'): "4", ('m', 'n'): "5", ('r'): "6"}
-    code = []
-
-    # Replaces letters with numbers assigned to those letters
-    for char in new_word:
-        for group, value in to_replace.items():
-            if char in group:
-                code.append(value)
-            else:
-                code.append(value)
-
-    # Joins list as string
-    code = "".join(code)
-
-    # Removes adjacent letters
+    # Removes adjacent numbers
     code = re.sub(r'([1-6])\1+', r'\1', code)
 
-    # If first letter is number, converts to word's first letter
-    code = re.sub(r'[1-6]', first_letter.upper(), code[0]) + code[1:]
+    # Removing not needed characters
+    code = first_letter + \
+        re.sub("[" + characters_to_remove + "]", "", code[1:])
+
+    # If first letter is number it chages it to first letter of word
+    code = re.sub(r'[1-6]', first_letter, code[0]) + code[1:]
 
     # Returns word soundex code, if code is shorter than 3 digists it adds 0
-    return code[:4].ljust(4, "0")
+    return code[:4].ljust(4, "0").upper()
 
 
 def get_word(word, input_word):
@@ -68,7 +73,7 @@ if __name__ == "__main__":
         sys.exit()
 
     if not (re.match('^[a-zA-Z]+$', requested_word)):
-        print("Input word must contain only letters no special symbols ir numbers")
+        print("Input word must contain only letters no special symbols or numbers")
         sys.exit()
 
     # Putting all words from txt file to list
